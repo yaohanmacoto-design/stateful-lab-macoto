@@ -1,17 +1,15 @@
-# stateful_lab_macoto
+# Mini Shopping Cart
 
-A new Flutter project.
+**Name:** Yaohan M. Macoto  
+**Activity:** Laboratory Activity No. 3  
+**Project:** Building a Mini Shopping Cart with StatefulWidget
 
-## Getting Started
+## Description
 
-This project is a starting point for a Flutter application.
+This Flutter application allows users to manage a mini shopping cart containing items, prices, and quantities. It uses `StatefulWidget` and `setState()` to update the user interface whenever users change item quantities, mark items as collected, add new items, or clear checked items.
 
-A few resources to get you started if this is your first Flutter project:
+The application also includes input validation, a live total price calculation, and `initState()` and `dispose()` to manage the initial sample items and text controllers.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Screenshot
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![App screenshot](screenshots/app.png)
