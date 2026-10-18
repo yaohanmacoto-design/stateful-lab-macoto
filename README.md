@@ -1,8 +1,8 @@
-# Mini Shopping Cart
+# Laboratory Activity 3
 
 **Name:** Yaohan M. Macoto  
-**Activity:** Laboratory Activity No. 3  
-**Project:** Building a Mini Shopping Cart with StatefulWidget
+**Activity:** Building a Mini Shopping Cart with StatefulWidget 
+**Project:** Mini Shopping Cart
 
 ## Description
 
