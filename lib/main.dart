@@ -49,6 +49,10 @@ class CartScreen extends StatefulWidget {
 class _CartScreenState extends State<CartScreen> {
   final List<CartItem> _items = [];
 
+  final TextEditingController _nameController = TextEditingController();
+
+  final TextEditingController _priceController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +60,13 @@ class _CartScreenState extends State<CartScreen> {
     _items.add(CartItem(name: 'Tulips', price: 250, quantity: 2));
     _items.add(CartItem(name: 'Lilies', price: 250, quantity: 5));
     _items.add(CartItem(name: 'Lavender', price: 125, quantity: 1));
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _priceController.dispose();
+    super.dispose();
   }
 
   void _increase(int i) {
@@ -77,6 +88,33 @@ class _CartScreenState extends State<CartScreen> {
   void _toggle(int i, bool value) {
     setState(() {
       _items[i].gotIt = value;
+    });
+  }
+
+  void _addItem() {
+    String name = _nameController.text.trim();
+    double? price = double.tryParse(_priceController.text);
+
+    if (name.isEmpty || price == null || price <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'Invalid item name or price. Please enter valid values.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _items.add(CartItem(name: name, price: price));
+      _nameController.clear();
+      _priceController.clear();
+    });
+  }
+
+  void _clearChecked() {
+    setState(() {
+      _items.removeWhere((item) => item.gotIt);
     });
   }
 
@@ -143,6 +181,61 @@ class _CartScreenState extends State<CartScreen> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'Item Name',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    controller: _priceController,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Price (PHP)',
+                      border: OutlineInputBorder(),
+                      isDense: true,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _addItem,
+                    child: const Text('Add'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _clearChecked,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: englishViolet,
+                      side: const BorderSide(
+                        color: englishViolet,
+                      ),
+                    ),
+                    child: const Text('Clear checked'),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
