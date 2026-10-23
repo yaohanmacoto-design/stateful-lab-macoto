@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 
+// Custom colors used for the app theme.
 const Color englishViolet = Color(0xFF563C5C);
 const Color orchidPink = Color(0xFFF2BDCD);
 
 void main() => runApp(
       MaterialApp(
+        // Customization 1: Set the background color of the app.
         theme: ThemeData(
           scaffoldBackgroundColor: Colors.white,
+
+          // Customization 2: Set the AppBar colors.
           appBarTheme: const AppBarTheme(
             backgroundColor: englishViolet,
             foregroundColor: Colors.white,
           ),
+
+          // Customization 3: Set the background color of cards.
           cardTheme: const CardThemeData(
             color: orchidPink,
           ),
+
+          // Customization 4: Set the colors of ElevatedButtons.
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               backgroundColor: englishViolet,
@@ -25,6 +33,7 @@ void main() => runApp(
       ),
     );
 
+// CartItem model stores the information for each shopping cart item.
 class CartItem {
   String name;
   double price;
@@ -39,6 +48,7 @@ class CartItem {
   });
 }
 
+// StatefulWidget allows the shopping cart screen to update when data changes.
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
 
@@ -46,13 +56,16 @@ class CartScreen extends StatefulWidget {
   State<CartScreen> createState() => _CartScreenState();
 }
 
+// State class stores the cart data and handles user interactions.
 class _CartScreenState extends State<CartScreen> {
+  // List that stores all shopping cart items.
   final List<CartItem> _items = [];
 
+  // Controllers read and clear the text entered by the user.
   final TextEditingController _nameController = TextEditingController();
-
   final TextEditingController _priceController = TextEditingController();
 
+  // Lifecycle method: preload sample items when the screen is created.
   @override
   void initState() {
     super.initState();
@@ -62,6 +75,7 @@ class _CartScreenState extends State<CartScreen> {
     _items.add(CartItem(name: 'Lavender', price: 125, quantity: 1));
   }
 
+  // Lifecycle method: release both controllers when the screen is removed.
   @override
   void dispose() {
     _nameController.dispose();
@@ -69,6 +83,7 @@ class _CartScreenState extends State<CartScreen> {
     super.dispose();
   }
 
+  // Increase the quantity, but do not allow it to exceed 99.
   void _increase(int i) {
     setState(() {
       if (_items[i].quantity < 99) {
@@ -77,6 +92,7 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
+  // Decrease the quantity, but keep it at a minimum of 1.
   void _decrease(int i) {
     setState(() {
       if (_items[i].quantity > 1) {
@@ -85,26 +101,31 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
+  // Update the got-it checkbox and refresh the screen.
   void _toggle(int i, bool value) {
     setState(() {
       _items[i].gotIt = value;
     });
   }
 
+  // Validate the input before adding a new item to the cart.
   void _addItem() {
     String name = _nameController.text.trim();
     double? price = double.tryParse(_priceController.text);
 
+    // Reject an empty name, invalid price, or price that is not positive.
     if (name.isEmpty || price == null || price <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Invalid item name or price. Please enter valid values.'),
+            'Invalid item name or price. Please enter valid values.',
+          ),
         ),
       );
       return;
     }
 
+    // Add the valid item and clear the input fields.
     setState(() {
       _items.add(CartItem(name: name, price: price));
       _nameController.clear();
@@ -112,12 +133,14 @@ class _CartScreenState extends State<CartScreen> {
     });
   }
 
+  // Remove all items marked as got it.
   void _clearChecked() {
     setState(() {
       _items.removeWhere((item) => item.gotIt);
     });
   }
 
+  // Calculate the total price of all items using price multiplied by quantity.
   double get _total {
     double total = 0;
 
@@ -128,6 +151,7 @@ class _CartScreenState extends State<CartScreen> {
     return total;
   }
 
+  // Build the shopping cart interface.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,13 +159,16 @@ class _CartScreenState extends State<CartScreen> {
         title: const Text('Mini Shopping Cart'),
       ),
       body: Padding(
+        // Add space around the main content.
         padding: const EdgeInsets.all(12),
         child: Column(
           children: [
+            // Display cart items in a scrollable list.
             Expanded(
               child: ListView.builder(
                 itemCount: _items.length,
                 itemBuilder: (context, i) {
+                  // Pass item data and callbacks to the stateless child.
                   return CartItemTile(
                     item: _items[i],
                     onIncrease: () => _increase(i),
@@ -151,7 +178,10 @@ class _CartScreenState extends State<CartScreen> {
                 },
               ),
             ),
+
             const SizedBox(height: 8),
+
+            // Show the number of items, checked items, and total price.
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -182,7 +212,10 @@ class _CartScreenState extends State<CartScreen> {
                 ],
               ),
             ),
+
             const SizedBox(height: 10),
+
+            // Text fields for entering an item name and price.
             Row(
               children: [
                 Expanded(
@@ -213,7 +246,10 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ],
             ),
+
             const SizedBox(height: 8),
+
+            // Buttons for adding an item and clearing checked items.
             Row(
               children: [
                 Expanded(
@@ -244,12 +280,15 @@ class _CartScreenState extends State<CartScreen> {
   }
 }
 
+// StatelessWidget displays one cart item.
+// It receives data and callbacks from CartScreen and does not call setState().
 class CartItemTile extends StatelessWidget {
   final CartItem item;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
   final ValueChanged<bool> onToggle;
 
+  // Constructor receives the item data and actions from the parent.
   const CartItemTile({
     super.key,
     required this.item,
@@ -262,6 +301,7 @@ class CartItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
+        // Checkbox calls the parent's callback when its value changes.
         leading: Checkbox(
           value: item.gotIt,
           activeColor: englishViolet,
@@ -271,6 +311,8 @@ class CartItemTile extends StatelessWidget {
             }
           },
         ),
+
+        // Cross out the item name when it is marked as got it.
         title: Text(
           item.name,
           style: TextStyle(
@@ -280,9 +322,13 @@ class CartItemTile extends StatelessWidget {
                 : TextDecoration.none,
           ),
         ),
+
+        // Display the price of one item.
         subtitle: Text(
           'PHP ${item.price.toStringAsFixed(2)} each',
         ),
+
+        // Quantity controls call the parent's increase and decrease methods.
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
